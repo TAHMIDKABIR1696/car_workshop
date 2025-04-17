@@ -1,0 +1,97 @@
+{% extends "master.html" %}
+{% load static %}
+
+{% block title %}Register | Car Workshop{% endblock %}
+
+{% block content %}
+<div class="banner d-flex justify-content-center align-items-center" style="background-image: url('{% static 'assets/imgs/banner.jpg' %}'); min-height: 100vh;">
+  <div class="form-box bg-white p-4 rounded shadow" style="width: 100%; max-width: 400px;">
+    <div id="message-box" class="text-danger mb-3"></div>
+    <h2 class="text-center mb-4">Registration</h2>
+    <form id="registerForm" method="POST" onsubmit="validateAndSubmit(event)">
+      {% csrf_token %}
+
+      <div class="mb-3 text-start">
+        <label for="username" class="form-label text-start">Username</label>
+        <input type="text" id="username" name="username" class="form-control" placeholder="Enter username" required />
+      </div>
+
+      <div class="mb-3 text-start">
+        <label for="pass" class="form-label text-start">Password</label>
+        <input type="password" id="pass" name="password" class="form-control" placeholder="Enter password" required />
+      </div>
+
+      <div class="mb-4 text-start">
+        <label for="c_pass" class="form-label text-start">Confirm Password</label>
+        <input type="password" id="c_pass" name="confirm_password" class="form-control" placeholder="Confirm password" required />
+      </div>
+
+      <div class="d-grid">
+        <button type="submit" class="btn btn-primary">Register</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+<script>
+  function validateAndSubmit(e) {
+    e.preventDefault(); 
+  
+    const username = document.getElementById("username").value;
+    const pass = document.getElementById("pass").value;
+    const c_pass = document.getElementById("c_pass").value;
+    const messageBox = document.getElementById("message-box");
+  
+    if (username === "") {
+      messageBox.innerText = "Username Required";
+      return;
+    }
+    if (pass === "") {
+      messageBox.innerText = "Password Required";
+      return;
+    }
+    if (c_pass === "") {
+      messageBox.innerText = "Confirm Password Required";
+      return;
+    }
+    if (pass !== c_pass) {
+      messageBox.innerText = "Passwords do not match!";
+      return;
+    }
+  
+    messageBox.innerText = "";
+  
+    const formData = {
+      csrfmiddlewaretoken: document.querySelector('[name=csrfmiddlewaretoken]').value,
+      username: username,
+      password: pass
+    };
+  
+    fetch("{% url 'register_submit' %}", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: new URLSearchParams(formData)
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          messageBox.style.color = "green";
+          messageBox.innerText = "Registration successful!";
+          document.getElementById("registerForm").reset();
+          window.location.href = data.redirect_url || "/login";
+        } else {
+          messageBox.style.color = "red";
+          messageBox.innerText = data.error || "Something went wrong.";
+        }
+      })
+      .catch(err => {
+        messageBox.style.color = "red";
+        messageBox.innerText = "Error submitting form.";
+      });
+  }
+  
+  </script>
+{% endblock %}

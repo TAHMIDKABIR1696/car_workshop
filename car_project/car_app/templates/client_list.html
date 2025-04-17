@@ -1,0 +1,42 @@
+{% extends "master.html" %}
+{% load static %}
+
+{% block title %}Client List | Car Workshop{% endblock %}
+
+{% block content %}
+<div class="banner d-flex justify-content-center align-items-start py-5" style="background-image: url('{% static 'assets/imgs/banner.jpg' %}'); min-height: 100vh;">
+  <div class="container rounded shadow p-4 mt-4" style="max-width: 1200px; width: 100%; background-color: rgba(255, 255, 255, 0.9);">
+    <h2 class="mb-4 text-center">Client List</h2>
+    <div class="table-responsive">
+      <table class="table table-striped table-bordered">
+        <thead class="table-dark">
+          <tr>
+            <th scope="col">SI.</th>
+            <th scope="col">Client Name</th>
+            <th scope="col">Client Phone</th>
+            <th scope="col">Client Address</th>
+            <th scope="col">Car License</th>
+            <th scope="col">Engine No</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for client in clients %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ client.name }}</td>
+            <td>{{ client.phone }}</td>
+            <td>{{ client.address }}</td>
+            <td>{{ client.car_license }}</td>
+            <td>{{ client.car_engine_number }}</td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="4" class="text-center">No Mechanic found.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

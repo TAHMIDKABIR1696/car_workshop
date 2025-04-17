@@ -1,0 +1,104 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Car Workshop</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body, html {
+      height: 100%;
+      font-family: Arial, sans-serif;
+    }
+
+    .navbar {
+      background-color: rgba(0, 0, 0, 0.7) !important;
+    }
+
+    .navbar-nav .nav-link {
+      color: white !important;
+      font-weight: 500;
+    }
+
+    .navbar-nav .nav-link:hover {
+      color: #ffcc00 !important;
+    }
+
+    .banner {
+      height: 100vh;
+      background-image: url('banner.jpg'); /* Replace with your image */
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding-top: 60px;
+    }
+
+    .banner h1 {
+      font-size: 3rem;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 1rem 2rem;
+      border-radius: 8px;
+      color: white;
+    }
+    
+  </style>
+</head>
+<body>
+
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+    <div class="container-fluid px-4">
+      <a class="navbar-brand fw-bold" href="{% url 'home' %}">Car Workshop</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <ul class="navbar-nav">
+          {% if user.is_authenticated %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'appointment_form' %}">Appointment Form</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'appointment_list' %}">Appointment List</a>
+            </li>
+        
+            {% if user.username == "tahmid" or user.is_superuser %}
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'mechanic_list' %}">Mechanic List</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'client_list' %}">Client List</a>
+              </li>
+            {% endif %}
+        
+            <li class="nav-item">
+              <form action="{% url 'logout' %}" method="POST" class="d-inline">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-link nav-link p-2" style="color: white;">Logout</button>
+              </form>
+            </li>
+          
+          {% else %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'login' %}">Login</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'register' %}">Registration</a>
+            </li>
+          {% endif %}
+        </ul>
+        
+      </div>
+    </div>
+  </nav>
+
+    {% block content %}
+
+    {% endblock %}
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

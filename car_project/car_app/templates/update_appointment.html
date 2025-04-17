@@ -1,0 +1,64 @@
+{% extends "master.html" %}
+{% load static %}
+
+{% block title %}Appointment | Car Workshop{% endblock %}
+
+{% block content %}
+<div class="banner" style="background-image: url('{% static 'assets/imgs/banner.jpg' %}'); padding: 5rem 0;">
+    <div class="container bg-white rounded shadow p-4 mt-5" style="max-width: 900px;">
+      <div id="message-box" class="text-danger mb-3"></div>
+        <h3 class="text-center mb-3">Book Your Car Service</h3>
+        <form id="appointmentUpdate" method="POST">
+          {% csrf_token %}
+            <div class="row g-2">
+                <div class="col-md-6">
+                    <div class="mb-2 text-start">
+                      <label for="appointment_date" class="form-label">Appointment Date</label>
+                      <input type="date" id="appointment_date" name="appointment_date" class="form-control"
+                             value="{{ appointment.appointment_date|date:'Y-m-d' }}" onchange="checkAvailability()" required>
+                    </div>
+                  </div>
+                <div class="col-md-6">
+                    <div class="mb-2 text-start">
+                      <label for="mechanic" class="form-label">Select Mechanic</label>
+                      <select id="mechanic" name="mechanic" class="form-select" required>
+                        <option value="">-- Choose Mechanic --</option>
+                        {% for mechanic in mechanics %}
+                          <option value="{{ mechanic.id }}" {% if mechanic.id == appointment.mechanic.id %}selected{% endif %}>
+                            {{ mechanic.name }}
+                          </option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                  </div>
+            </div>
+
+            <div class="text-end mt-3">
+                <button type="submit" class="btn btn-success">Update</button>
+                <a href="{% url 'appointment_list' %}" class="btn btn-secondary">Cancel</a>
+              </div>
+        </form>
+    </div>
+</div>
+<script>
+    function checkAvailability() {
+      const date = document.getElementById("appointment_date").value;
+      const mechanicSelect = document.getElementById("mechanic");
+  
+      if (date) {
+        fetch(`/get_available_mechanics/?date=${date}`)
+          .then(response => response.json())
+          .then(data => {
+            mechanicSelect.innerHTML = '<option value="">-- Choose Mechanic --</option>';
+
+            data.mechanics.forEach(mechanic => {
+              const option = document.createElement("option");
+              option.value = mechanic.id;
+              option.textContent = mechanic.name;
+              mechanicSelect.appendChild(option);
+            });
+          });
+      }
+    }
+  </script>
+{% endblock %}

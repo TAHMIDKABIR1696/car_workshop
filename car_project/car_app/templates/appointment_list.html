@@ -1,0 +1,45 @@
+{% extends "master.html" %}
+{% load static %}
+
+{% block title %}Appointment List | Car Workshop{% endblock %}
+
+{% block content %}
+<div class="banner d-flex justify-content-center align-items-start py-5" style="background-image: url('{% static 'assets/imgs/banner.jpg' %}'); min-height: 100vh;">
+  <div class="container rounded shadow p-4 mt-4" style="max-width: 1200px; width: 100%; background-color: rgba(255, 255, 255, 0.9);">
+    <h2 class="mb-4 text-center">Appointment List</h2>
+    <div class="table-responsive">
+      <table class="table table-striped table-bordered">
+        <thead class="table-dark">
+          <tr>
+            <th scope="col">SI.</th>
+            <th scope="col">Mechanic</th>
+            <th scope="col">Car License</th>
+            {% if user.username == "tahmid" or user.is_superuser %}
+              <th scope="col">Actions</th>
+            {% endif %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for appointment in appointments %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ appointment.mechanic.name }}</td>
+            <td>{{ appointment.car_license }}</td>
+              {% if user.username == "tahmid" or user.is_superuser %}
+              <td>
+                <a href="{% url 'update_appointment' appointment.id %}" class="btn btn-primary btn-sm">Update</a>
+              </td>
+              {% endif %}
+            
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="4" class="text-center">No appointments found.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
